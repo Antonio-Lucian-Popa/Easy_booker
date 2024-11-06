@@ -1,0 +1,63 @@
+# Configurare pentru PostgreSQL
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/easybookerdb
+    username: postgres
+    password: your_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  liquibase:
+    enabled: true
+    drop-first: false # Drops and creates scheme from scratch on every start
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  # Configurare pentru trimiterea emailurilor
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your_email@gmail.com
+    password: your_email_password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# Configurare OAuth2 pentru Google ?i Facebook
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: YOUR_GOOGLE_CLIENT_ID
+            client-secret: YOUR_GOOGLE_CLIENT_SECRET
+            scope: profile, email
+            redirect-uri: "{baseUrl}/api/auth/oauth2/callback/google"
+          facebook:
+            client-id: YOUR_FACEBOOK_APP_ID
+            client-secret: YOUR_FACEBOOK_APP_SECRET
+            scope: email, public_profile
+            redirect-uri: "{baseUrl}/api/auth/oauth2/callback/facebook"
+
+# Configurare JWT
+jwt:
+  secret: my_secret_key
+  expiration: 36000000 # Expirare token în milisecunde (10 ore)
+
+# Configurare Twilio pentru SMS
+twilio:
+  account:
+    sid: your_twilio_account_sid
+    token: your_twilio_auth_token
+    phone:
+      number: your_twilio_phone_number
+
+# Set?ri pentru portul serverului Spring Boot
+server:
+  port: 8080

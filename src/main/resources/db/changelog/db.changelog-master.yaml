@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: EASYBOOKER/master.yaml
+      relativeToChangelogFile: true
