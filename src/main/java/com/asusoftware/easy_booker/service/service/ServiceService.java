@@ -4,6 +4,10 @@ import com.asusoftware.easy_booker.service.model.EasyService;
 import com.asusoftware.easy_booker.service.model.dto.ServiceRequestDto;
 import com.asusoftware.easy_booker.service.model.dto.ServiceResponseDto;
 import com.asusoftware.easy_booker.service.repository.ServiceRepository;
+import com.asusoftware.easy_booker.user.model.User;
+import com.asusoftware.easy_booker.user.model.dto.UserResponseDto;
+import com.asusoftware.easy_booker.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +19,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class ServiceService {
+
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<ServiceResponseDto> getAllServices() {
         return serviceRepository.findAll().stream()
@@ -31,12 +39,15 @@ public class ServiceService {
     }
 
     @Transactional
-    public ServiceResponseDto createService(ServiceRequestDto ServiceRequestDto) {
+    public ServiceResponseDto createService(ServiceRequestDto ServiceRequestDto, UUID userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         EasyService service = new EasyService();
         service.setServiceName(ServiceRequestDto.getServiceName());
         service.setDescription(ServiceRequestDto.getDescription());
         service.setDuration(ServiceRequestDto.getDuration());
         service.setPrice(ServiceRequestDto.getPrice());
+        service.setUser(user);
 
         EasyService savedService = serviceRepository.save(service);
         return convertToResponseDTO(savedService);
@@ -70,6 +81,11 @@ public class ServiceService {
         dto.setDescription(service.getDescription());
         dto.setDuration(service.getDuration());
         dto.setPrice(service.getPrice());
+       /* UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setId(service.getUser().getId());
+        userResponseDto.setUsername(service.getUser().getUsername());
+        userResponseDto.setRole(service.getUser().getRole()); */
+        dto.setUserId(service.getUser().getId());
         return dto;
     }
 }

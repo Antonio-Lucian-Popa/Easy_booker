@@ -31,9 +31,9 @@ public class ServiceController {
         return ResponseEntity.ok(serviceService.getServiceById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<ServiceResponseDto> createService(@RequestBody ServiceRequestDto ServiceRequestDto) {
-        return ResponseEntity.ok(serviceService.createService(ServiceRequestDto));
+    @PostMapping("/{userId}")
+    public ResponseEntity<ServiceResponseDto> createService(@RequestBody ServiceRequestDto ServiceRequestDto, @PathVariable("userId") UUID userId) {
+        return ResponseEntity.ok(serviceService.createService(ServiceRequestDto, userId));
     }
 
     @PutMapping("/{id}")

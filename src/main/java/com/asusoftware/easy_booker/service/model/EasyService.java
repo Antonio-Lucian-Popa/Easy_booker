@@ -1,5 +1,6 @@
 package com.asusoftware.easy_booker.service.model;
 
+import com.asusoftware.easy_booker.user.model.User;
 import lombok.Data;
 import jakarta.persistence.*;
 import java.util.UUID;
@@ -24,4 +25,8 @@ public class EasyService {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
