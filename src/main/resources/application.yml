@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/easybookerdb
     username: postgres
-    password: your_password
+    password: password
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -48,7 +48,7 @@ spring:
 # Configurare JWT
 jwt:
   secret: my_secret_key
-  expiration: 36000000 # Expirare token în milisecunde (10 ore)
+  expiration: 36000000 # Expirare token ï¿½n milisecunde (10 ore)
 
 # Configurare Twilio pentru SMS
 twilio:

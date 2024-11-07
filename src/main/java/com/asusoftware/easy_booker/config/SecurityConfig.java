@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Dezactivează CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/oauth2/**", "/login/**", "/oauth2/**").permitAll() // Permit acces la aceste endpointuri
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/oauth2/**", "/login/**", "/oauth2/**").permitAll() // Permit acces la endpointurile de autentificare și înregistrare
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // fără sesiuni
@@ -41,6 +41,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
