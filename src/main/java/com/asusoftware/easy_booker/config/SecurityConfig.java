@@ -1,5 +1,6 @@
 package com.asusoftware.easy_booker.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -17,11 +21,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final JwtUtil jwtUtil;
 
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter, OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) {
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter, JwtUtil jwtUtil) {
         this.jwtRequestFilter = jwtRequestFilter;
-        this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
+        this.jwtUtil = jwtUtil;
     }
 
     @Bean
@@ -29,19 +33,20 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Dezactivează CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/oauth2/**", "/login/**", "/oauth2/**").permitAll() // Permit acces la endpointurile de autentificare și înregistrare
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/oauth2/**").permitAll() // Permit acces la endpointurile de autentificare și înregistrare
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // fără sesiuni
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .successHandler(oAuth2LoginSuccessHandler) // Handler pentru login cu OAuth2
+                        .successHandler((request, response, authentication) -> {
+                            String token = jwtUtil.generateToken(authentication.getName());
+                            response.sendRedirect("http://localhost:4200/login/success?token=" + token);
+                        })
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -52,9 +57,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        // Configurează sursa de autentificare aici, dacă este necesar
-        // Ex: authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-
         return authenticationManagerBuilder.build();
     }
 }

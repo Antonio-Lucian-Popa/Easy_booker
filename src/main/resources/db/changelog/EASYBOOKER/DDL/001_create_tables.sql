@@ -6,22 +6,10 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    role_id UUID NOT NULL,
+    role VARCHAR(50) NOT NULL, -- Folosim un VARCHAR pentru a stoca rolul ca text
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE
 );
-
--- Tabel roluri
-CREATE TABLE IF NOT EXISTS roles (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    role_name VARCHAR(50) UNIQUE NOT NULL
-);
-
--- Asociație între utilizatori și roluri
-ALTER TABLE users
-ADD CONSTRAINT fk_user_role
-FOREIGN KEY (role_id)
-REFERENCES roles (id);
 
 -- Tabel programări
 CREATE TABLE IF NOT EXISTS appointments (
@@ -44,12 +32,6 @@ CREATE TABLE IF NOT EXISTS services (
     duration INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL
 );
-
--- Asociație între programări și servicii
-ALTER TABLE appointments
-ADD CONSTRAINT fk_service_appointment
-FOREIGN KEY (service_id)
-REFERENCES services (id);
 
 -- Tabel disponibilitate
 CREATE TABLE IF NOT EXISTS availability (

@@ -6,6 +6,7 @@ import com.asusoftware.easy_booker.auth.dto.RegisterRequest;
 import com.asusoftware.easy_booker.config.JwtUtil;
 import com.asusoftware.easy_booker.user.repository.UserRepository;
 import com.asusoftware.easy_booker.user.repository.model.User;
+import com.asusoftware.easy_booker.user.repository.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,6 +32,9 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
+
+        // Atribuie rolul implicit ROLE_USER
+        user.setRole(UserRole.ROLE_USER);
 
         userRepository.save(user);
     }
