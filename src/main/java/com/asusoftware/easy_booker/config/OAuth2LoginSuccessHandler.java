@@ -2,7 +2,7 @@ package com.asusoftware.easy_booker.config;
 
 
 import com.asusoftware.easy_booker.user.repository.UserRepository;
-import com.asusoftware.easy_booker.user.repository.model.User;
+import com.asusoftware.easy_booker.user.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

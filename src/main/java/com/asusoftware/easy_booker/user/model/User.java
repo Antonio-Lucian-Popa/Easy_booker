@@ -1,4 +1,4 @@
-package com.asusoftware.easy_booker.user.repository.model;
+package com.asusoftware.easy_booker.user.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

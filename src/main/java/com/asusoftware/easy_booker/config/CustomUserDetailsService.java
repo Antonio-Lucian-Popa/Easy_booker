@@ -1,7 +1,7 @@
 package com.asusoftware.easy_booker.config;
 
 import com.asusoftware.easy_booker.user.repository.UserRepository;
-import com.asusoftware.easy_booker.user.repository.model.User;
+import com.asusoftware.easy_booker.user.model.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
