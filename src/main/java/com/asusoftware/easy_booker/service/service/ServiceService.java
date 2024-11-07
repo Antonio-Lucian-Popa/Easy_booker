@@ -1,29 +1,76 @@
 package com.asusoftware.easy_booker.service.service;
 
 import com.asusoftware.easy_booker.service.model.EasyService;
+import com.asusoftware.easy_booker.service.model.dto.ServiceRequestDto;
+import com.asusoftware.easy_booker.service.model.dto.ServiceResponseDto;
 import com.asusoftware.easy_booker.service.repository.ServiceRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ServiceService {
     @Autowired
     private ServiceRepository serviceRepository;
 
-    public EasyService save(EasyService service) {
-        return serviceRepository.save(service);
+    public List<ServiceResponseDto> getAllServices() {
+        return serviceRepository.findAll().stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<EasyService> findAll() {
-        return serviceRepository.findAll();
+    public ServiceResponseDto getServiceById(UUID id) {
+        EasyService service = serviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        return convertToResponseDTO(service);
     }
 
-    public EasyService findById(UUID id) {
-        return serviceRepository.findById(id).orElse(null);
+    @Transactional
+    public ServiceResponseDto createService(ServiceRequestDto ServiceRequestDto) {
+        EasyService service = new EasyService();
+        service.setServiceName(ServiceRequestDto.getServiceName());
+        service.setDescription(ServiceRequestDto.getDescription());
+        service.setDuration(ServiceRequestDto.getDuration());
+        service.setPrice(ServiceRequestDto.getPrice());
+
+        EasyService savedService = serviceRepository.save(service);
+        return convertToResponseDTO(savedService);
+    }
+
+    @Transactional
+    public ServiceResponseDto updateService(UUID id, ServiceRequestDto ServiceRequestDto) {
+        EasyService service = serviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        service.setServiceName(ServiceRequestDto.getServiceName());
+        service.setDescription(ServiceRequestDto.getDescription());
+        service.setDuration(ServiceRequestDto.getDuration());
+        service.setPrice(ServiceRequestDto.getPrice());
+
+        EasyService updatedService = serviceRepository.save(service);
+        return convertToResponseDTO(updatedService);
+    }
+
+    @Transactional
+    public void deleteService(UUID id) {
+        EasyService service = serviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+        serviceRepository.delete(service);
+    }
+
+    private ServiceResponseDto convertToResponseDTO(EasyService service) {
+        ServiceResponseDto dto = new ServiceResponseDto();
+        dto.setId(service.getId());
+        dto.setServiceName(service.getServiceName());
+        dto.setDescription(service.getDescription());
+        dto.setDuration(service.getDuration());
+        dto.setPrice(service.getPrice());
+        return dto;
     }
 }
 
