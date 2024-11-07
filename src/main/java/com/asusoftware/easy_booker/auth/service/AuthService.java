@@ -41,12 +41,12 @@ public class AuthService {
 
     public String login(AuthRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return jwtUtil.generateToken(user.getUsername());
+        return jwtUtil.generateToken(user.getEmail());
     }
 }

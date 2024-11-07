@@ -33,8 +33,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
 
+        // Listează rutele permise fără autentificare
         String[] openEndpoints = {"/api/auth/login", "/api/auth/register", "/oauth2/**"};
 
+        // Dacă cererea se adresează unui endpoint permis, trece fără autentificare
         for (String endpoint : openEndpoints) {
             if (pathMatcher.match(endpoint, request.getServletPath())) {
                 chain.doFilter(request, response);
