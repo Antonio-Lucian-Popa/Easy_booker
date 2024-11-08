@@ -39,4 +39,9 @@ public class Appointment {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // Calculăm `endTime` pe baza `time` și durata serviciului
+    public LocalTime getEndTime() {
+        return time.plusMinutes(easyService.getDuration());
+    }
 }
