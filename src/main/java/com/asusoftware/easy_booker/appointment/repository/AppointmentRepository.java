@@ -1,6 +1,8 @@
 package com.asusoftware.easy_booker.appointment.repository;
 
 import com.asusoftware.easy_booker.appointment.model.Appointment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,11 +16,13 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     // Metodă personalizată pentru a găsi programările după userId și dată
     List<Appointment> findByUserIdAndDate(UUID userId, LocalDate date);
 
-    List<Appointment> findByUserIdAndDateAfter(UUID userId, LocalDate date);
+    Page<Appointment> findAll(Pageable pageable);
 
-    List<Appointment> findByUserIdAndDateBefore(UUID userId, LocalDate date);
+    Page<Appointment> findByUserId(UUID userId, Pageable pageable);
 
-    List<Appointment> findByUserIdAndStatus(UUID userId, String status);
+    Page<Appointment> findByUserIdAndDateAfter(UUID userId, LocalDate date, Pageable pageable);
 
-    List<Appointment> findByUserId(UUID userId);
+    Page<Appointment> findByUserIdAndDateBefore(UUID userId, LocalDate date, Pageable pageable);
+
+    Page<Appointment> findByUserIdAndStatus(UUID userId, String status, Pageable pageable);
 }

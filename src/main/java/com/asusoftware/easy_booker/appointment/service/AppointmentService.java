@@ -8,6 +8,8 @@ import com.asusoftware.easy_booker.service.repository.ServiceRepository;
 import com.asusoftware.easy_booker.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -71,35 +73,26 @@ public class AppointmentService {
         return mapToResponseDTO(appointment);
     }
 
-    // Get all appointments
-    public List<AppointmentResponseDto> getAllAppointments() {
-        return appointmentRepository.findAll().stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+    public Page<AppointmentResponseDto> getAllAppointments(Pageable pageable) {
+        return appointmentRepository.findAll(pageable).map(this::mapToResponseDTO);
     }
 
-    public List<AppointmentResponseDto> getAllAppointmentsByUserId(UUID userId) {
-        return appointmentRepository.findByUserId(userId).stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+    public Page<AppointmentResponseDto> getAllAppointmentsByUserId(UUID userId, Pageable pageable) {
+        return appointmentRepository.findByUserId(userId, pageable).map(this::mapToResponseDTO);
     }
 
-    public List<AppointmentResponseDto> getUpcomingAppointments(UUID userId) {
-        return appointmentRepository.findByUserIdAndDateAfter(userId, today).stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+    public Page<AppointmentResponseDto> getUpcomingAppointments(UUID userId, Pageable pageable) {
+        LocalDate today = LocalDate.now();
+        return appointmentRepository.findByUserIdAndDateAfter(userId, today, pageable).map(this::mapToResponseDTO);
     }
 
-    public List<AppointmentResponseDto> getPastAppointments(UUID userId) {
-        return appointmentRepository.findByUserIdAndDateBefore(userId, today).stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+    public Page<AppointmentResponseDto> getPastAppointments(UUID userId, Pageable pageable) {
+        LocalDate today = LocalDate.now();
+        return appointmentRepository.findByUserIdAndDateBefore(userId, today, pageable).map(this::mapToResponseDTO);
     }
 
-    public List<AppointmentResponseDto> getCancelledAppointments(UUID userId) {
-        return appointmentRepository.findByUserIdAndStatus(userId, "cancelled").stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+    public Page<AppointmentResponseDto> getCancelledAppointments(UUID userId, Pageable pageable) {
+        return appointmentRepository.findByUserIdAndStatus(userId, "cancelled", pageable).map(this::mapToResponseDTO);
     }
 
 

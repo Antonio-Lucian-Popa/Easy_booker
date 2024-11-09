@@ -4,6 +4,8 @@ import com.asusoftware.easy_booker.appointment.model.dto.AppointmentRequestDto;
 import com.asusoftware.easy_booker.appointment.model.dto.AppointmentResponseDto;
 import com.asusoftware.easy_booker.appointment.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,40 +41,39 @@ public class AppointmentController {
         return ResponseEntity.ok(appointment);
     }
 
-    // Endpoint pentru a obține toate programările
     @GetMapping
-    public ResponseEntity<List<AppointmentResponseDto>> getAllAppointments() {
-        List<AppointmentResponseDto> appointments = appointmentService.getAllAppointments();
+    public ResponseEntity<Page<AppointmentResponseDto>> getAllAppointments(Pageable pageable) {
+        Page<AppointmentResponseDto> appointments = appointmentService.getAllAppointments(pageable);
         return ResponseEntity.ok(appointments);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<AppointmentResponseDto>> getAllAppointmentsByUserId(@PathVariable UUID userId) {
-        List<AppointmentResponseDto> appointments = appointmentService.getAllAppointmentsByUserId(userId);
+    public ResponseEntity<Page<AppointmentResponseDto>> getAllAppointmentsByUserId(
+            @PathVariable UUID userId, Pageable pageable) {
+        Page<AppointmentResponseDto> appointments = appointmentService.getAllAppointmentsByUserId(userId, pageable);
         return ResponseEntity.ok(appointments);
     }
 
-    // Endpoint to get upcoming appointments
     @GetMapping("/user/{userId}/upcoming")
-    public ResponseEntity<List<AppointmentResponseDto>> getUpcomingAppointments(@PathVariable UUID userId) {
-        List<AppointmentResponseDto> appointments = appointmentService.getUpcomingAppointments(userId);
+    public ResponseEntity<Page<AppointmentResponseDto>> getUpcomingAppointments(
+            @PathVariable UUID userId, Pageable pageable) {
+        Page<AppointmentResponseDto> appointments = appointmentService.getUpcomingAppointments(userId, pageable);
         return ResponseEntity.ok(appointments);
     }
 
-    // Endpoint to get past appointments
     @GetMapping("/user/{userId}/past")
-    public ResponseEntity<List<AppointmentResponseDto>> getPastAppointments(@PathVariable UUID userId) {
-        List<AppointmentResponseDto> appointments = appointmentService.getPastAppointments(userId);
+    public ResponseEntity<Page<AppointmentResponseDto>> getPastAppointments(
+            @PathVariable UUID userId, Pageable pageable) {
+        Page<AppointmentResponseDto> appointments = appointmentService.getPastAppointments(userId, pageable);
         return ResponseEntity.ok(appointments);
     }
 
-    // Endpoint to get cancelled appointments
     @GetMapping("/user/{userId}/cancelled")
-    public ResponseEntity<List<AppointmentResponseDto>> getCancelledAppointments(@PathVariable UUID userId) {
-        List<AppointmentResponseDto> appointments = appointmentService.getCancelledAppointments(userId);
+    public ResponseEntity<Page<AppointmentResponseDto>> getCancelledAppointments(
+            @PathVariable UUID userId, Pageable pageable) {
+        Page<AppointmentResponseDto> appointments = appointmentService.getCancelledAppointments(userId, pageable);
         return ResponseEntity.ok(appointments);
     }
-
     // Endpoint pentru a șterge o programare după ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable UUID id) {
