@@ -46,6 +46,33 @@ public class AppointmentController {
         return ResponseEntity.ok(appointments);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<AppointmentResponseDto>> getAllAppointmentsByUserId(@PathVariable UUID userId) {
+        List<AppointmentResponseDto> appointments = appointmentService.getAllAppointmentsByUserId(userId);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Endpoint to get upcoming appointments
+    @GetMapping("/user/{userId}/upcoming")
+    public ResponseEntity<List<AppointmentResponseDto>> getUpcomingAppointments(@PathVariable UUID userId) {
+        List<AppointmentResponseDto> appointments = appointmentService.getUpcomingAppointments(userId);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Endpoint to get past appointments
+    @GetMapping("/user/{userId}/past")
+    public ResponseEntity<List<AppointmentResponseDto>> getPastAppointments(@PathVariable UUID userId) {
+        List<AppointmentResponseDto> appointments = appointmentService.getPastAppointments(userId);
+        return ResponseEntity.ok(appointments);
+    }
+
+    // Endpoint to get cancelled appointments
+    @GetMapping("/user/{userId}/cancelled")
+    public ResponseEntity<List<AppointmentResponseDto>> getCancelledAppointments(@PathVariable UUID userId) {
+        List<AppointmentResponseDto> appointments = appointmentService.getCancelledAppointments(userId);
+        return ResponseEntity.ok(appointments);
+    }
+
     // Endpoint pentru a șterge o programare după ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAppointment(@PathVariable UUID id) {

@@ -33,6 +33,27 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Dezactivează CSRF
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/**", "/oauth2/**").permitAll() // Permit acces la endpointurile de autentificare și înregistrare
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // fără sesiuni
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler((request, response, authentication) -> {
+                            String token = jwtUtil.generateToken(authentication.getName());
+                            response.sendRedirect("http://localhost:4200/login/success?token=" + token);
+                        })
+                )
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    /*
+         @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable()) // Dezactivează CSRF
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/oauth2/**").permitAll() // Permit acces la endpointurile de autentificare și înregistrare
                         .anyRequest().authenticated()
                 )
@@ -47,6 +68,8 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    */
 
 
     @Bean

@@ -13,4 +13,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     // Metodă personalizată pentru a găsi programările după userId și dată
     List<Appointment> findByUserIdAndDate(UUID userId, LocalDate date);
+
+    List<Appointment> findByUserIdAndDateAfter(UUID userId, LocalDate date);
+
+    List<Appointment> findByUserIdAndDateBefore(UUID userId, LocalDate date);
+
+    List<Appointment> findByUserIdAndStatus(UUID userId, String status);
+
+    List<Appointment> findByUserId(UUID userId);
 }

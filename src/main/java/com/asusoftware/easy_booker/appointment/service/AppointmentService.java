@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,6 +25,8 @@ public class AppointmentService {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    private final LocalDate today = LocalDate.now();
 
     // Create a new appointment
     @Transactional
@@ -74,6 +77,31 @@ public class AppointmentService {
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    public List<AppointmentResponseDto> getAllAppointmentsByUserId(UUID userId) {
+        return appointmentRepository.findByUserId(userId).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentResponseDto> getUpcomingAppointments(UUID userId) {
+        return appointmentRepository.findByUserIdAndDateAfter(userId, today).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentResponseDto> getPastAppointments(UUID userId) {
+        return appointmentRepository.findByUserIdAndDateBefore(userId, today).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentResponseDto> getCancelledAppointments(UUID userId) {
+        return appointmentRepository.findByUserIdAndStatus(userId, "cancelled").stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
 
     // Delete an appointment
     @Transactional
