@@ -22,7 +22,7 @@ public class Appointment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id")
     private EasyService easyService;
 
@@ -42,6 +42,9 @@ public class Appointment {
 
     // Calculăm `endTime` pe baza `time` și durata serviciului
     public LocalTime getEndTime() {
+        if (easyService == null) {
+            throw new IllegalStateException("Service is not associated with this appointment");
+        }
         return time.plusMinutes(easyService.getDuration());
     }
 }

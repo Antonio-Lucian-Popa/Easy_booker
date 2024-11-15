@@ -38,11 +38,11 @@ CREATE TABLE IF NOT EXISTS services (
 -- Tabel disponibilitate
 CREATE TABLE IF NOT EXISTS availability (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL,
+    service_id UUID NOT NULL,
     day_of_week INT NOT NULL, -- ziua săptămânii (0 = Duminică, 1 = Luni, etc.)
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    CONSTRAINT fk_user_availability FOREIGN KEY (user_id) REFERENCES users(id)
+    CONSTRAINT fk_service_availability FOREIGN KEY (service_id) REFERENCES services(id)
 );
 
 -- Tabel notificări

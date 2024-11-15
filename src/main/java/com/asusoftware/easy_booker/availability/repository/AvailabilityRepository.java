@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface AvailabilityRepository extends JpaRepository<Availability, UUID> {
 
     // Metodă personalizată pentru a găsi disponibilitatea după userId și ziua săptămânii
-    Optional<Availability> findByUserIdAndDayOfWeek(UUID userId, int dayOfWeek);
+    Optional<Availability> findByService_User_IdAndDayOfWeek(UUID userId, int dayOfWeek);
 }

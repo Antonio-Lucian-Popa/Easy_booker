@@ -1,8 +1,11 @@
 package com.asusoftware.easy_booker.service.model;
 
+import com.asusoftware.easy_booker.availability.model.Availability;
 import com.asusoftware.easy_booker.user.model.User;
 import lombok.Data;
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.UUID;
 import java.math.BigDecimal;
 
@@ -29,4 +32,7 @@ public class EasyService {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Availability> availabilities;
 }

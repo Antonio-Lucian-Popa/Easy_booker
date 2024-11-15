@@ -7,6 +7,8 @@ import com.asusoftware.easy_booker.availability.model.dto.AvailabilityRequestDto
 import com.asusoftware.easy_booker.availability.model.dto.AvailabilityResponseDto;
 import com.asusoftware.easy_booker.availability.model.dto.TimeIntervalDto;
 import com.asusoftware.easy_booker.availability.repository.AvailabilityRepository;
+import com.asusoftware.easy_booker.service.model.EasyService;
+import com.asusoftware.easy_booker.service.repository.ServiceRepository;
 import com.asusoftware.easy_booker.user.model.User;
 import com.asusoftware.easy_booker.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +32,9 @@ public class AvailabilityService {
     private UserRepository userRepository;
 
     @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
     private AppointmentRepository appointmentRepository;
 
 
@@ -45,6 +50,7 @@ public class AvailabilityService {
         return convertToResponseDTO(availability);
     }
 
+    /*
     @Transactional
     public AvailabilityResponseDto createAvailability(AvailabilityRequestDto AvailabilityRequestDto) {
         User user = userRepository.findById(AvailabilityRequestDto.getUserId())
@@ -58,24 +64,45 @@ public class AvailabilityService {
 
         Availability savedAvailability = availabilityRepository.save(availability);
         return convertToResponseDTO(savedAvailability);
+    } */
+
+    @Transactional
+    public AvailabilityResponseDto createAvailability(AvailabilityRequestDto requestDto) {
+        EasyService service = serviceRepository.findById(requestDto.getServiceId())
+                .orElseThrow(() -> new RuntimeException("Service not found"));
+
+        Availability availability = new Availability();
+        availability.setService(service);
+        availability.setDayOfWeek(requestDto.getDayOfWeek());
+        availability.setStartTime(requestDto.getStartTime());
+        availability.setEndTime(requestDto.getEndTime());
+
+        Availability savedAvailability = availabilityRepository.save(availability);
+
+        return convertToResponseDTO(savedAvailability);
     }
 
     @Transactional
-    public AvailabilityResponseDto updateAvailability(UUID id, AvailabilityRequestDto AvailabilityRequestDto) {
+    public AvailabilityResponseDto updateAvailability(UUID id, AvailabilityRequestDto availabilityRequestDto) {
+        // Găsește disponibilitatea după ID
         Availability availability = availabilityRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Availability not found"));
 
-        User user = userRepository.findById(AvailabilityRequestDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        // Găsește serviciul asociat după serviceId din DTO
+        EasyService service = serviceRepository.findById(availabilityRequestDto.getServiceId())
+                .orElseThrow(() -> new RuntimeException("Service not found"));
 
-        availability.setUser(user);
-        availability.setDayOfWeek(AvailabilityRequestDto.getDayOfWeek());
-        availability.setStartTime(AvailabilityRequestDto.getStartTime());
-        availability.setEndTime(AvailabilityRequestDto.getEndTime());
+        // Actualizează câmpurile disponibilității
+        availability.setService(service);
+        availability.setDayOfWeek(availabilityRequestDto.getDayOfWeek());
+        availability.setStartTime(availabilityRequestDto.getStartTime());
+        availability.setEndTime(availabilityRequestDto.getEndTime());
 
+        // Salvează modificările și returnează răspunsul
         Availability updatedAvailability = availabilityRepository.save(availability);
         return convertToResponseDTO(updatedAvailability);
     }
+
 
     @Transactional
     public void deleteAvailability(UUID id) {
@@ -89,7 +116,7 @@ public class AvailabilityService {
         int dayOfWeek = date.getDayOfWeek().getValue();
 
         // Obține intervalul de disponibilitate generală pentru ziua respectivă
-        Availability availability = availabilityRepository.findByUserIdAndDayOfWeek(userId, dayOfWeek)
+        Availability availability = availabilityRepository.findByService_User_IdAndDayOfWeek(userId, dayOfWeek)
                 .orElseThrow(() -> new EntityNotFoundException("No availability found for this day"));
 
         // Obține programările existente pentru utilizator în acea zi
@@ -132,7 +159,7 @@ public class AvailabilityService {
     private AvailabilityResponseDto convertToResponseDTO(Availability availability) {
         AvailabilityResponseDto dto = new AvailabilityResponseDto();
         dto.setId(availability.getId());
-        dto.setUserId(availability.getUser().getId());
+        dto.setServiceId(availability.getService().getId());
         dto.setDayOfWeek(availability.getDayOfWeek());
         dto.setStartTime(availability.getStartTime());
         dto.setEndTime(availability.getEndTime());

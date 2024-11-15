@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 public class AvailabilityResponseDto {
     private UUID id;
-    private UUID userId;
+    private UUID serviceId; // ID-ul serviciului
     private Integer dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;

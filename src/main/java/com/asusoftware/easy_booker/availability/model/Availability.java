@@ -1,5 +1,6 @@
 package com.asusoftware.easy_booker.availability.model;
 
+import com.asusoftware.easy_booker.service.model.EasyService;
 import com.asusoftware.easy_booker.user.model.User;
 import lombok.Data;
 import jakarta.persistence.*;
@@ -15,9 +16,9 @@ public class Availability {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", nullable = false)
+    private EasyService service; // Relația cu Service, nu cu User
 
     @Column(name = "day_of_week", nullable = false)
     private int dayOfWeek;

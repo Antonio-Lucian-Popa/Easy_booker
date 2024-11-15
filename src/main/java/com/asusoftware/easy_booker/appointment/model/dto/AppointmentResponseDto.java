@@ -13,6 +13,7 @@ public class AppointmentResponseDto {
     private UUID serviceId;
     private LocalDate date;
     private LocalTime time;
+    private LocalTime endTime;
     private String description;
     private String status;
     private String userName;

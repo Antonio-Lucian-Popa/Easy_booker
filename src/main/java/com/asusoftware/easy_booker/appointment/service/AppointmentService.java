@@ -117,6 +117,7 @@ public class AppointmentService {
         responseDTO.setStatus(appointment.getStatus());
         responseDTO.setUserName(appointment.getUser().getUsername());
         responseDTO.setServiceName(appointment.getEasyService().getServiceName());
+        responseDTO.setEndTime(appointment.getEndTime());
         return responseDTO;
     }
 }

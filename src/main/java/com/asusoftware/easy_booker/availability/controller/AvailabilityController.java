@@ -20,36 +20,42 @@ public class AvailabilityController {
     @Autowired
     private AvailabilityService availabilityService;
 
+    // Obține toate disponibilitățile
     @GetMapping
     public ResponseEntity<List<AvailabilityResponseDto>> getAllAvailabilities() {
         return ResponseEntity.ok(availabilityService.getAllAvailabilities());
     }
 
+    // Obține o disponibilitate după ID
     @GetMapping("/{id}")
     public ResponseEntity<AvailabilityResponseDto> getAvailabilityById(@PathVariable UUID id) {
         return ResponseEntity.ok(availabilityService.getAvailabilityById(id));
     }
 
-    @GetMapping("/user/{userId}/available-time-slots")
+    // Obține intervalele de timp disponibile pentru un serviciu într-o anumită zi
+    @GetMapping("/service/{serviceId}/available-time-slots")
     public ResponseEntity<List<TimeIntervalDto>> getAvailableTimeSlots(
-            @PathVariable UUID userId,
+            @PathVariable UUID serviceId,
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        List<TimeIntervalDto> availableSlots = availabilityService.calculateAvailableTimeSlots(userId, date);
+        List<TimeIntervalDto> availableSlots = availabilityService.calculateAvailableTimeSlots(serviceId, date);
         return ResponseEntity.ok(availableSlots);
     }
 
+    // Creează o nouă disponibilitate
     @PostMapping
-    public ResponseEntity<AvailabilityResponseDto> createAvailability(@RequestBody AvailabilityRequestDto AvailabilityRequestDto) {
-        return ResponseEntity.ok(availabilityService.createAvailability(AvailabilityRequestDto));
+    public ResponseEntity<AvailabilityResponseDto> createAvailability(@RequestBody AvailabilityRequestDto availabilityRequestDto) {
+        return ResponseEntity.ok(availabilityService.createAvailability(availabilityRequestDto));
     }
 
+    // Actualizează o disponibilitate existentă
     @PutMapping("/{id}")
     public ResponseEntity<AvailabilityResponseDto> updateAvailability(
-            @PathVariable UUID id, @RequestBody AvailabilityRequestDto AvailabilityRequestDto) {
-        return ResponseEntity.ok(availabilityService.updateAvailability(id, AvailabilityRequestDto));
+            @PathVariable UUID id, @RequestBody AvailabilityRequestDto availabilityRequestDto) {
+        return ResponseEntity.ok(availabilityService.updateAvailability(id, availabilityRequestDto));
     }
 
+    // Șterge o disponibilitate
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAvailability(@PathVariable UUID id) {
         availabilityService.deleteAvailability(id);
